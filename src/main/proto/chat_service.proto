@@ -1,0 +1,13 @@
+syntax = "proto3";
+package service.chat;
+
+import "chat_info.proto";
+import "chat_message.proto";
+
+service ChatService {
+  //Сlient sends chat information to the server and receives all saved messages from the BD
+  rpc startChatService (ChatInfo) returns (stream ChatMessage);
+  //Client opens Bi-directional stream then client sends message to store in BD to the first stream,
+  //and receives new stored messages from DB
+  rpc openMessageStream (stream ChatMessage) returns (stream ChatMessage);
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package service.chat;
+
+message ChatInfo {
+  string chatId = 1;
+  string senderId = 2;
+  string recipientId = 3;
+}
