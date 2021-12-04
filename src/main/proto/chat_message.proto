@@ -2,12 +2,20 @@ syntax = "proto3";
 package service.chat;
 
 import "google/protobuf/timestamp.proto";
+import "chat_info.proto";
+import "chat_status.proto";
 
-message ChatMessage {
-  string messageId = 1;
-  string chatId = 2;
-  string senderId = 3;
-  string recipientId = 4;
-  string body = 5;
-  google.protobuf.Timestamp timestamp = 6;
+message ChatRequest {
+  ChatInfo chatInfo = 1;
+  string body = 2;
+}
+
+message ChatResponse {
+  ChatInfo chatInfo = 1;
+  string body = 2;
+  int64 timestamp_in_millis = 3;
+}
+
+message ChatStatus {
+  Status status = 1;
 }
