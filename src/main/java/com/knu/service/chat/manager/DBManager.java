@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 
 public class DBManager {
 
-    private static final String allChatMessages = "SELECT * FROM messages WHERE chat_id=?";
-    private static final String addNewMessage = "INSERT INTO messages  (chat_id, sender_id, recipient_id, body, timestamp) VALUES (?, ?, ?, ?, ?)";
+    private static final String allChatMessages = "SELECT * FROM chat_messages WHERE chat_id=?";
+    private static final String addNewMessage = "INSERT INTO chat_messages  (chat_id, sender_id, recipient_id, body, timestamp) VALUES (?, ?, ?, ?, ?)";
 
     private static final Logger logger = Logger.getLogger(DBManager.class.getName());
     private Connection connection = null;

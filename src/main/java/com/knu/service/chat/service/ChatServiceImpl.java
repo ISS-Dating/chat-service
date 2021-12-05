@@ -29,6 +29,7 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
         if (!clientManager.isLogged(request)) {
             clientManager.addNewClient(request, responseObserver);
+            logger.info("Client: " + request + " - added");
         } else {
             responseObserver.onError(new Exception("This client already logged"));
         }
@@ -43,9 +44,9 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
     @Override
     public void request(ChatMessage.ChatRequest request, StreamObserver<ChatMessage.ChatStatus> responseObserver) {
 
-        if (clientManager.isLogged(request.getChatInfo())) {
+        logger.info("Received ChatInfo request on chat server:\n" + request.toString());
 
-            logger.info("Received ChatInfo request on chat server:\n" + request.toString());
+        if (clientManager.isLogged(request.getChatInfo())) {
 
             ChatMessage.ChatResponse response = dbManager.addNewMessage(request);
 

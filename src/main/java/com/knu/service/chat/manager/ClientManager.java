@@ -7,9 +7,11 @@ import service.chat.ChatInfoOuterClass;
 import service.chat.ChatMessage;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class ClientManager {
 
+    private static final Logger logger = Logger.getLogger(ClientManager.class.getName());
     private Set<MutablePair<ChatInfoOuterClass.ChatInfo, StreamObserver<ChatMessage.ChatResponse>>> clients = Sets.newConcurrentHashSet();
 
     public void addNewClient(ChatInfoOuterClass.ChatInfo chatInfo, StreamObserver<ChatMessage.ChatResponse> streamObserver) {
@@ -39,7 +41,13 @@ public class ClientManager {
             ChatInfoOuterClass.ChatInfo chatInfo = pair.getKey();
 
             if (response.getChatInfo().getChatId().equals(chatInfo.getChatId())) {
-                pair.getValue().onNext(response);
+                try {
+                    pair.getValue().onNext(response);
+                } catch (Exception e) {
+                    logger.warning("Client: " + pair.getKey() + " - isnt available");
+                    removeClient(pair.getKey());
+                }
+
             }
         }
     }
