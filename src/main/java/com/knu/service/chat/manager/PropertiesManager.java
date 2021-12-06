@@ -12,6 +12,7 @@ public class PropertiesManager {
         InputStream input = PropertiesManager.class.getClassLoader().getResourceAsStream(fileName);
 
         properties = new Properties();
+
         properties.load(input);
     }
 

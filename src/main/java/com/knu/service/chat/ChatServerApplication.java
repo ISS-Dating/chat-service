@@ -8,7 +8,7 @@ import java.io.IOException;
 public class ChatServerApplication {
     public static void main(String[] args) throws IOException, InterruptedException {
         ChatServer server = new ChatServer();
-        server.start(5566);
+        server.start(5566, 5567);
         server.blockUntilShutdown();
     }
 }
