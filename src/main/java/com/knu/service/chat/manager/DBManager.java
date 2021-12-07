@@ -1,14 +1,11 @@
 package com.knu.service.chat.manager;
 
-import com.google.protobuf.Timestamp;
 import com.knu.service.chat.tools.Converter;
 import service.chat.ChatInfoOuterClass;
 import service.chat.ChatMessage;
 
 import java.io.IOException;
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,9 +18,7 @@ public class DBManager {
     private static final Logger logger = Logger.getLogger(DBManager.class.getName());
     private Connection connection = null;
 
-    public DBManager() throws IOException {
-
-        PropertiesManager propertiesManager = new PropertiesManager("db.properties");
+    public DBManager(String url, String user, String password) throws IOException {
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -37,10 +32,7 @@ public class DBManager {
 
         try {
 
-            connection = DriverManager.getConnection(
-                    propertiesManager.getProperty("db.postgres.url"),
-                    propertiesManager.getProperty("db.postgres.user"),
-                    propertiesManager.getProperty("db.postgres.password"));
+            connection = DriverManager.getConnection(url, user, password);
             logger.info("Connected to DB");
 
         } catch (SQLException e) {
@@ -64,7 +56,7 @@ public class DBManager {
                 ChatMessage.ChatResponse response = Converter.getUserFromResultSet(result);
 
                 if ((chatInfo.getSenderId().equals(response.getChatInfo().getSenderId()) && chatInfo.getRecipientId().equals(response.getChatInfo().getRecipientId()))
-                || (chatInfo.getSenderId().equals(response.getChatInfo().getRecipientId()) && chatInfo.getRecipientId().equals(response.getChatInfo().getSenderId()))) {
+                        || (chatInfo.getSenderId().equals(response.getChatInfo().getRecipientId()) && chatInfo.getRecipientId().equals(response.getChatInfo().getSenderId()))) {
                     list.add(response);
                 }
             }

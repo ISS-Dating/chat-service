@@ -8,7 +8,7 @@ public class PropertiesManager {
 
     private final Properties properties;
 
-    PropertiesManager(String fileName) throws IOException {
+    public PropertiesManager(String fileName) throws IOException {
         InputStream input = PropertiesManager.class.getClassLoader().getResourceAsStream(fileName);
 
         properties = new Properties();

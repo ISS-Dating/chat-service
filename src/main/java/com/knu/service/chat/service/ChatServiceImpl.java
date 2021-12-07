@@ -1,8 +1,10 @@
 package com.knu.service.chat.service;
 
-import com.google.protobuf.Timestamp;
 import com.knu.service.chat.manager.ClientManager;
 import com.knu.service.chat.manager.DBManager;
+import com.knu.service.chat.manager.PropertiesManager;
+import com.knu.service.chat.tools.Converter;
+import com.sproutsocial.nsq.Publisher;
 import io.grpc.stub.StreamObserver;
 import service.chat.ChatInfoOuterClass;
 import service.chat.ChatMessage;
@@ -18,10 +20,19 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
     private static final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
     private final ClientManager clientManager;
     private final DBManager dbManager;
+    private final Publisher publisher;
+    private final String nsqTopic;
 
     public ChatServiceImpl() throws IOException {
-        dbManager = new DBManager();
+
+        PropertiesManager propertiesManager = new PropertiesManager("application.properties");
+
+        dbManager = new DBManager(propertiesManager.getProperty("db.postgres.url"), propertiesManager.getProperty("db.postgres.user"), propertiesManager.getProperty("db.postgres.password"));
+
         clientManager = new ClientManager();
+
+        publisher = new Publisher(propertiesManager.getProperty("nsq.host") + ":" + propertiesManager.getProperty("nsq.port"));
+        nsqTopic = propertiesManager.getProperty("nsq.topic");
     }
 
     @Override
@@ -57,6 +68,8 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
                 responseObserver.onNext(ChatMessage.ChatStatus.newBuilder()
                         .setStatus(ChatStatus.Status.SUCCESS)
                         .build());
+
+                publisher.publishBuffered(nsqTopic, Converter.convert(response));
             } else {
                 responseObserver.onNext(ChatMessage.ChatStatus.newBuilder()
                         .setStatus(ChatStatus.Status.ERROR)
@@ -64,6 +77,7 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
             }
 
         } else {
+            logger.warning("CLIENT_NOT_LOGGED");
             responseObserver.onNext(ChatMessage.ChatStatus.newBuilder()
                     .setStatus(ChatStatus.Status.CLIENT_NOT_LOGGED)
                     .build());
