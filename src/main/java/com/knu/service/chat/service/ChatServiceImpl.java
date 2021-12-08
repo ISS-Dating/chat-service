@@ -43,7 +43,7 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
             logger.info("Client: " + request + " - added");
         } else {
             responseObserver.onError(new Exception("This client already logged"));
-            return
+            return;
         }
 
         List<ChatMessage.ChatResponse> list = dbManager.getAllChatHistory(request);
