@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.knu.service.chat.grpcweb.GrpcPortNumRelay;
 import com.knu.service.chat.grpcweb.JettyWebserverForGrpcwebTraffic;
 import com.knu.service.chat.service.ChatServiceImpl;
+import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
@@ -18,6 +19,7 @@ public class ChatServer {
     public void start(int grpcPort, int grpcWebPort) throws IOException {
         server = ServerBuilder.forPort(grpcPort)
                 .addService(new ChatServiceImpl())
+                .addService(ProtoReflectionService.newInstance())
                 .build()
                 .start();
 
