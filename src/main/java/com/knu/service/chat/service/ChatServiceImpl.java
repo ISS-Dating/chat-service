@@ -37,11 +37,13 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
     @Override
     public void login(ChatInfoOuterClass.ChatInfo request, StreamObserver<ChatMessage.ChatResponse> responseObserver) {
-
+        logger.info("login called");
         if (!clientManager.isLogged(request)) {
+            logger.info("add client");
             clientManager.addNewClient(request, responseObserver);
             logger.info("Client: " + request + " - added");
         } else {
+            logger.info("already logged");
             responseObserver.onError(new Exception("This client already logged"));
             return;
         }
