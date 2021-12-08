@@ -22,11 +22,11 @@ public class Converter {
     }
 
     public static byte[] convert(ChatMessage.ChatResponse response) {
-        String s = "{'chat_info': {'chat_id': '" + response.getChatInfo().getChatId() + "', " +
-                "'sender_id': '" + response.getChatInfo().getSenderId() + "', " +
-                "'recipient_id': '" + response.getChatInfo().getRecipientId() + "'}, " +
-                "'message': '" + response.getBody() + "', " +
-                "'time_in_millis': '" + response.getTimestampInMillis() + "'}";
+        String s = '{"chat_id": "' + response.getChatInfo().getChatId() + '", '+
+                '"sender_id": "' + response.getChatInfo().getSenderId() + '", ' +
+                '"recipient_id": "' + response.getChatInfo().getRecipientId() + '", ' +
+                '"message": "' + response.getBody() + '", ' +
+                '"time_in_millis": "' + response.getTimestampInMillis() + '"}';
         return s.getBytes();
     }
 }
