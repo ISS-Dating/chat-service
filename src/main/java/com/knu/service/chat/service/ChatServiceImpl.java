@@ -20,7 +20,8 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
     private static final Logger logger = Logger.getLogger(ChatServiceImpl.class.getName());
     private final ClientManager clientManager;
     private final DBManager dbManager;
-    private final Publisher publisher;
+    private final Publisher publisher1;
+    private final Publisher publisher2;
     private final String nsqTopic;
 
     public ChatServiceImpl() throws IOException {
@@ -31,7 +32,8 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
 
         clientManager = new ClientManager();
 
-        publisher = new Publisher(propertiesManager.getProperty("nsq.host") + ":" + propertiesManager.getProperty("nsq.port"));
+        publisher1 = new Publisher("nsqd");
+        publisher2 = new Publisher("nsqlookupd");
         nsqTopic = propertiesManager.getProperty("nsq.topic");
     }
 
@@ -72,7 +74,12 @@ public class ChatServiceImpl extends ChatServiceGrpc.ChatServiceImplBase {
                         .setStatus(ChatStatus.Status.SUCCESS)
                         .build());
 
-                publisher.publishBuffered(nsqTopic, Converter.convert(response));
+                try {
+                    publisher1.publishBuffered(nsqTopic, Converter.convert(response));
+                } catch (Exception e) {}
+                try {
+                    publisher2.publishBuffered(nsqTopic, Converter.convert(response));
+                } catch (Exception e) {}
             } else {
                 responseObserver.onNext(ChatMessage.ChatStatus.newBuilder()
                         .setStatus(ChatStatus.Status.ERROR)
